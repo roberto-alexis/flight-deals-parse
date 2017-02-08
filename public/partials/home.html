@@ -1,0 +1,179 @@
+<div class="panel panel-default collapse" id="editPost">
+    <div class="panel-heading">
+        Edit deal
+    </div>
+    <div class="panel-body">
+        <form>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="postTitle">Title</label>
+                        <input type="text" ng-model="newPost.title" class="form-control" id="postTitle" placeholder="This is an amazing deal...">
+                    </div>
+                    <div class="form-group">
+                        <label for="postTitle">Link</label>
+                        <input type="text" ng-model="newPost.link" class="form-control" id="postLink" placeholder="http://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="postContent">Content</label>
+                        <textarea class="form-control" ng-model="newPost.content" id="postContent" placeholder="Any content without HTML markup..." rows="3"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="postContentHtml">Content HTML</label>
+                        <textarea class="form-control" ng-model="newPost.contentHtml" id="postContentHtml" placeholder="(Optional) You can leave this empty" rows="3"/>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="postType">Type</label>
+                        <input type="text" ng-model="newPost.type" class="form-control" id="postType" placeholder="(Optional) Type of deal: 'flight' or 'other'">
+                    </div>
+                    <div class="form-group">
+                        <label for="postTitle">Price</label>
+                        <input type="text" ng-model="newPost.price" class="form-control" id="postPrice" placeholder="123.45">
+                    </div>
+                    <div class="form-group">
+                        <label for="postTitle">From</label>
+                        <input type="text" ng-model="newPost.from" class="form-control" id="postFrom" placeholder="Airport/City/Country comma separated">
+                    </div>
+                    <div class="form-group">
+                        <label for="postTitle">To</label>
+                        <input type="text" ng-model="newPost.to" class="form-control" id="postTo" placeholder="Airport/City/Country comma separated">
+                    </div>
+                    <div class="form-group">
+                        <label for="postImageUrl">Image URL</label>
+                        <input type="text" ng-model="newPost.imageUrl" class="form-control" id="postImageUrl" placeholder="(Optional) URL of the image for this deal.">
+                    </div>
+                    <div class="form-group">
+                        <label for="postSeller">Seller</label>
+                        <input type="text" ng-model="newPost.seller" class="form-control" id="postSeller" placeholder="(Optional) Vendor of this deal">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="newPost.isSpecial">
+                            Special Deal
+                        </label>
+                    </div>
+                    <div class="checkbox" ng-if="!newPost.id">
+                        <label>
+                            <input type="checkbox" ng-model="newPost.notifyProduction">
+                            Notify production
+                        </label>
+                    </div>
+                    <div class="checkbox" ng-if="!newPost.id">
+                        <label>
+                            <input type="checkbox" ng-model="newPost.notifyDebug">
+                            Notify debug
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-success" ng-if="newPost.id" ng-click="savePost();">
+                        Update
+                        <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-success" ng-if="!newPost.id" ng-click="savePost();">
+                        Post new
+                        <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger" ng-click="cancelEdit();" onclick="$('#editPost').collapse('hide');">
+                        Cancel
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Previous deals:
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8">
+                <button ng-click="cancelEdit()" type="button" class="btn btn-primary" data-toggle="collapse" data-target="#editPost" aria-expanded="false" aria-controls="editPost">
+                    Add new
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning" ng-click="notifyDebugPosts()">
+                    Notify debug
+                    <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-danger" ng-click="notifyProductionPosts()">
+                    Notify production
+                    <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-danger" ng-click="deleteSelectedPosts()">
+                    Delete
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+                <span ng-if="posts.selected && posts.selected.length &gt; 0">
+                    Deals selected: <span class="badge">{{posts.selected.length}}</span>
+                </span>
+            </div>
+            <div class="col-md-4 text-right">
+                <dir-pagination-controls max-size="7" boundary-links="false" pagination-id="postsPagination" on-page-change="getPosts(newPageNumber)" template-url="external/dirPagination.tpl.html"/>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-hover table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" aria-label="select all" ng-click="toggleCheck()"/>
+                        </th>
+                        <th>Id</th>
+                        <th>Content</th>
+                        <th>Data</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr dir-paginate="post in posts | itemsPerPage: pageSize" total-items="totalRecords" current-page="currentPage" pagination-id="postsPagination">
+                        <td><input type="checkbox" aria-label="select" checklist-model="posts.selected" checklist-value="post.id"/></td>
+                        <td nowrap>
+                            <a ng-click="editPost(post.id);" onclick="showEdit();">{{post.id}} <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                        </td>
+                        <td>
+                            <a href="{{post.link}}">{{post.title}}</a>
+                            <p>{{post.content}}</p>
+                        </td>
+                        <td>
+                            <div>Type: <span class="label label-primary">{{post.type}}</span></div>
+                            <div>Price: <span class="label label-primary">$ {{post.price}}</span></div>
+                            <div>From: <span class="label label-primary">{{post.from}}</span></div>
+                            <div>To: <span class="label label-primary">{{post.to}}</span></div>
+                            <div>Seller: <span class="label label-primary">{{post.seller}}</span></div>
+                            <div>Tags: <span ng-repeat="tag in post.tags" class="label label-primary">{{tag}}</span></div>
+                            <div>Notified:
+                                <span class="label label-primary" ng-if="post.notifiedProduction && post.notifiedDebug">All</span>
+                                <span class="label label-warning" ng-if="post.notifiedProduction && !post.notifiedDebug">Production</span>
+                                <span class="label label-warning" ng-if="!post.notifiedProduction && post.notifiedDebug">Debug</span>
+                                <span class="label label-danger" ng-if="!post.notifiedProduction && !post.notifiedDebug">None</span>
+                            </div>
+                            <div>Special deal:
+                                <span class="label label-primary" ng-if="!post.isSpecial">No</span>
+                                <span class="label label-success" ng-if="post.isSpecial">YES!</span>
+                            </div>
+                            <div>Pub. date: <span class="label label-primary">{{post.pubDate}}</span></div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var showEdit = function() {
+        $('#editPost').collapse('show');
+        $('html, body').animate({
+            scrollTop: 0
+        }, 1000);
+    }
+</script>

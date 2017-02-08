@@ -1,0 +1,56 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Sources:
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-4">
+                <highchart id="recordsProcessed" config="recordsProcessed"></highchart>
+            </div>
+            <div class="col-md-4">
+                <highchart id="errorExecs" config="errorExecs"></highchart>
+            </div>
+            <div class="col-md-4">
+                <highchart id="errorRecords" config="errorRecords"></highchart>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-hover table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th nowrap>Enabled</th>
+                        <th nowrap>Name</th>
+                        <th nowrap>Parser Type</th>
+                        <th nowrap>Parser Params</th>
+                        <th nowrap>Interval</th>
+                        <th nowrap>Next exec.</th>
+                        <th nowrap>Notify</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="source in sources" class="{{source.status}}">
+                        <td>
+                            <button type="button" class="btn btn-xs" ng-click="toggleEnabled(source);" ng-class="{'btn-primary': source.enabled, 'btn-default': !source.enabled}">
+                                {{source.enabled ? "On" : "Off"}}
+                            </button>
+                        </td>
+                        <td nowrap>{{source.name}}</td>
+                        <td nowrap>{{source.parserType}}</td>
+                        <td>{{source.parserParams}}</td>
+                        <td nowrap>{{source.interval}}</td>
+                        <td nowrap>{{source.nextExec}}</td>
+                        <td nowrap>
+                            <button type="button" class="btn btn-xs" ng-click="toggleProduction(source);" ng-class="{'btn-primary': source.notifyProduction, 'btn-default': !source.notifyProduction}">Production</button>
+                            <button type="button" class="btn btn-xs" ng-click="toggleDebug(source);" ng-class="{'btn-primary': source.notifyDebug, 'btn-default': !source.notifyDebug}">Debug</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

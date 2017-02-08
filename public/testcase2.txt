@@ -1,0 +1,8 @@
+2
+6
+0,0,easy
+0,0,one
+1,0,little
+1,0,more
+2,0,little
+2,0,more
